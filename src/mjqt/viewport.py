@@ -1,9 +1,3 @@
-"""MuJoCo × PyQt5 Viewport Implementation.
-
-This module implements a QOpenGLWidget that renders MuJoCo scenes using 
-mjv_* + mjr_* APIs directly into Qt's OpenGL context without embedding GLFW.
-"""
-
 from __future__ import annotations
 
 import logging
@@ -65,23 +59,8 @@ class MjQtViewport(QGLWidget):
         </mujoco>
         """
         try:
-            self.load_model_from_xml(default_xml)
-        except Exception as e:
-            logger.error(f"Failed to load default model: {e}")
-            raise
-
-    def load_model_from_xml(self, xml_content: str) -> None:
-        """Load a MuJoCo model from XML string.
-        
-        Args:
-            xml_content: The XML string containing the MuJoCo model.
-            
-        Raises:
-            Exception: If the model fails to load.
-        """
-        try:
             # Create model and data
-            self._model = mj.MjModel.from_xml_string(xml_content)
+            self._model = mj.MjModel.from_xml_string(default_xml)
             self._data = mj.MjData(self._model)
             
             # Initialize visualization objects
@@ -94,11 +73,11 @@ class MjQtViewport(QGLWidget):
             mj.mjv_defaultCamera(self._cam)
             mj.mjv_defaultOption(self._opt)
             
-            logger.info("Model loaded successfully from XML string")
+            logger.info("Default model loaded successfully")
                 
         except Exception as e:
-            logger.error(f"Failed to load model from XML: {e}")
-            raise Exception(f"Model loading failed: {e}") from e
+            logger.error(f"Failed to load default model: {e}")
+            raise
 
     def load_model_from_path(self, path: str) -> None:
         """Load a MuJoCo model from file path.
@@ -116,7 +95,21 @@ class MjQtViewport(QGLWidget):
         try:
             with open(model_path, 'r', encoding='utf-8') as f:
                 xml_content = f.read()
-            self.load_model_from_xml(xml_content)
+                
+            # Create model and data
+            self._model = mj.MjModel.from_xml_string(xml_content)
+            self._data = mj.MjData(self._model)
+            
+            # Initialize visualization objects
+            self._cam = mj.MjvCamera()
+            self._opt = mj.MjvOption()
+            self._scene = mj.MjvScene(self._model, maxgeom=1000)
+            self._con = mj.MjrContext(self._model, mj.mjtFontScale.mjFONTSCALE_150)
+            
+            # Set defaults
+            mj.mjv_defaultCamera(self._cam)
+            mj.mjv_defaultOption(self._opt)
+            
             logger.info(f"Model loaded successfully from {path}")
         except Exception as e:
             logger.error(f"Failed to load model from {path}: {e}")
