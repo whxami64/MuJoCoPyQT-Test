@@ -14,11 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 class MjQtViewport(QGLWidget):
-    """A PyQt5 QGLWidget that renders MuJoCo scenes without GLFW embedding.
-    
-    This widget owns the OpenGL context and renders MuJoCo using mjv_* + mjr_*
-    APIs. Physics is stepped via QTimer to keep the UI responsive.
-    """
 
     def __init__(self, parent: Optional[QtWidgets.QWidget] = None) -> None:
         """Initialize the MuJoCo Qt viewport.
