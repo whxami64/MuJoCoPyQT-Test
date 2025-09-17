@@ -1,0 +1,7 @@
+<mujoco>
+  <worldbody>
+    <geom type="box" size="0.1 0.1 0.1" rgba="0.2 0.6 0.9 1"/>
+    <light diffuse="1 1 1" pos="0 0 2"/>
+    <camera name="free" mode="targetbody" target="world" pos="0 0 2"/>
+  </worldbody>
+</mujoco>
